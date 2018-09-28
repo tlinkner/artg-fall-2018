@@ -1,3 +1,16 @@
+/*
+ * Note: I decided to rewrite the layout using 
+ * flexbox sice I am well versed in relative/absolute 
+ * positioning. 
+ * 
+ * Flebox has the advantage of being able to adapt to 
+ * content that would over flow the boundaries of the 
+ * page regions. It also sets up a more efficient 
+ * interface for adapting the layout to various 
+ * device displays using media-quesries.
+ */
+
+
 .outerbox{
 	width:900px;
 	height:300px;
@@ -13,19 +26,32 @@
 	box-sizing: border-box;
 }
 
+#outerbox-1 .innerbox + .innerbox{
+    border-top: 0;
+}
+
 /* Fixed vs absolute vs relative positioning */
 #outerbox-2{
 
 }
 #outerbox-2 .innerbox{
+/*
 	width:100%;
 	height:33.333%;
+*/
+	width:10%;
+	height:10%;
 }
 #outerbox-2 #innerbox-1{
 	background:red;
+    position: fixed;
+    top: 0;
+    left: 0;
 	/*fixed position*/
 }
 #outerbox-2 #innerbox-2{
+    position: relative;
+    top: 50%;
 	background:yellow;
 	/*relative positioning*/
 }
@@ -36,8 +62,9 @@
 
 /* CSS float */
 #outerbox-3 .innerbox{
-	width:33.33333%;
+	width:45%;
 	/*CSS float */
+    float: left;
 }
 #outerbox-3 #innerbox-1{
 	background:red;

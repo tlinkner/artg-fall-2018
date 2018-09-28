@@ -1,43 +1,66 @@
-/* CSS override */
-html,body,h1,h2,h3,p,div{
-	margin:0;
-	padding:0;
+/* Browser resets */
+
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
 }
 
-html,body,.container{
-	width:100%;
-	height:100%;
-	position:relative;
+/* Layout */
+
+.container {
+	display: flex;
+	flex-direction: column;
+	flex-grow:
+	/* Override Bootstrap container */
+	margin: 0;
+	padding: 0;
+	max-width: 100%;
+	min-height: 100%;
 }
 
-.sidebar,
-.main-viz,
-footer{
-	position:absolute;
-}
-.sidebar{
-	background:yellow;
-	top:0;
-	bottom:100px;
-	left:0;
-	right:70%;
-}
-.main-viz{
-	background:blue;
-	top:0;
-	bottom:100px;
-	left:30%;
-	right:0;
-}
-footer{
-	background:green;
-	bottom:0;
-	width:100%;
-	height:100px;
+.main {
+	/* Use flexbox for layout to acommodate overflow in the event that content exceeds the space available in a single screen. */
+	flex: 1;
+	display: flex;
+	flex-direction: row;
 }
 
-.sidebar .module{
-	box-sizing:border-box;
-	border:1px solid black;
-	height: 200px;
+.sidebar {
+	flex: 1;
+	flex-basis: 30%;
+	color: #fff;
+	background-color: #000;
+	box-sizing: border-box;
+	padding: 0.5rem;
+}
+
+.main-viz {
+	flex: 1;
+	flex-basis: 70%;
+	padding: 0.5em;
+	color: #000;
+	background-color: #fff;
+}
+
+.footer {
+	box-sizing: border-box;
+	padding: 0.5em;
+	height: 6.25rem;
+	color: #fff;
+	background-color: #333;
+}
+
+/* Modules */
+
+.module {
+	position: static;
+	padding: 0.5em;
+	border: 1px solid #333;
+	border-radius: 0.5rem;
+	height: 12.5rem;
+}
+
+.module + .module {
+	margin-top: 0.5rem;
 }
