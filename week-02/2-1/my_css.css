@@ -1,4 +1,39 @@
+<<<<<<< HEAD
 body {
   color: rgb(0,0,0);
   background-color: rgb(255,255,0);
 }
+=======
+/* override */
+html,body,h1,h2,h3,p,
+div,ul,li{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+body{
+	font-family:'Helvetica',sans-serif;
+	font-size:16px;
+}
+
+h1{
+	font-size:3rem;
+	border-bottom:2px solid black;
+}
+h2{
+	font-size:2rem;
+}
+a {
+	border:1px solid red;
+}
+
+path{
+	fill:rgb(0,0,255);
+}
+
+footer a{
+	font-weight:bold;
+	border:none;
+}
+>>>>>>> fa7bdaac05d49e141cd786d885fe935605a57e71
