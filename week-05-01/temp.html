@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+</head>
+<body>
+<h1>tmp</h1>
+<script src='../lib/d3/d3.min.js'></script>
+<script>
+
+const a = [1,2,3,4];
+
+// console.log(d3.sum(a));
+
+const b = [
+    {name: "a", a: [1,2,3]},
+    {name: "b", a: [4,5,6]},
+    {name: "c", a: [7,8,9]}
+]
+
+bavg = b.map(function(d){
+    d.avg = d3.sum(d.a) / d.a.length
+    delete d.a;
+});
+
+
+
+d3.nest().key(function(d){
+    return d.organisation.Country; })
+.rollup(function(leaves){
+    return d3.sum(leaves, function(d){
+        return d.Value;
+    });
+}).entries(data)
+.map(function(d){
+    return { Country: d.key, Value: d.values};
+});
+
+
+
+// console.log(b);
+
+
+
+
+
+const c = [
+  {
+    k: "key1",
+    v: [
+      {name: "a",val: 1},
+      {name: "b",val: 2},
+      {name: "c",val: 3}
+    ]
+  },
+  {
+    k: "key2",
+    v: [
+      {name: "a",val: 1},
+      {name: "b",val: 2},
+      {name: "c",val: 3}
+    ]
+  }
+];
+
+
+console.log(c);
+
+</script>
+</body>
+</html>
