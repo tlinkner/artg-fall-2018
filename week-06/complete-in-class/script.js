@@ -60,6 +60,54 @@ function chart1(selection, data){
 		.attr('class', 'chart')
 		.attr('transform', `translate(${m.l}, ${m.t})`);
 
+	//Here, we draw the same information as in chart 1, using a different patter
+	chart.selectAll('circle')
+		.data(data)
+		.enter()
+		.append('circle')
+		.attr('cx', function(d){ return scaleX(d.square_footage) })
+		.attr('cy', function(d){ return scaleY(d.cost_estimate) })
+		.attr('r', 1.5)
+		.style('fill-opacity', .4)
+		.style('fill', function(d){ return scaleColor(d.borough) });
+
+	//Bonus: draw axis
+	const axisX = d3.axisBottom()
+		.scale(scaleX)
+		.tickSize(-h);
+	const axisY = d3.axisLeft()
+		.scale(scaleY)
+		.tickSize(-w);
+
+	chart.append('g')
+		.attr('transform', `translate(0, ${h})`)
+		.call(axisX)
+		.selectAll('line')
+		.style('stroke-opacity', .1);
+
+	chart.append('g')
+		.call(axisY)
+		.selectAll('line')
+		.style('stroke-opacity', .1);
+
+}
+
+function chart2(selection, data){
+
+	const w = selection.node().clientWidth - m.l - m.r;
+	const h = selection.node().clientHeight - m.t - m.b;
+
+	scaleX.range([0,w]);
+	scaleY.range([h,0]);
+
+	//Append DOM elements
+	const svg = selection.append('svg')
+		.attr('width', w + m.l + m.r)
+		.attr('height', h + m.t + m.b);
+	const chart = svg.append('g')
+		.attr('class', 'chart')
+		.attr('transform', `translate(${m.l}, ${m.t})`);
+
 	//For each "row" in the data, draw a corresponding symbol
 	data.forEach(function(d){
 
@@ -96,10 +144,6 @@ function chart1(selection, data){
 		.call(axisY)
 		.selectAll('line')
 		.style('stroke-opacity', .1);
-
-}
-
-function chart2(selection, data){
 
 }
 
