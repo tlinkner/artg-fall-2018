@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style>
+body {
+  margin: 3em;
+  font-family: sans-serif;
+}
+nav {
+  margin-bottom: 1em;
+  width: 600px;
+  display: flex;
+  flex-direction: row;
+}
+.btn {
+  flex: 1;
+  border-radius: 3px;
+  padding: 0.5em 1em;
+  text-align: center;
+  color: #fff;
+  background: #333;
+  cursor: pointer;
+}
+.btn:active {
+  background: #ccc;
+}
+.btn + .btn {
+  margin-left:  0.5em;
+}
+.plot {
+/*  border: 1px dashed #000;*/
+  width: 600px;
+  height: 600px;
+  background: #eee;
+}
+</style>
+</head>
+<body>
+
+<h1>Anscombe's Quartet</h1>
+
+ <nav>
+  <a class="btn" id="b1">1</a>
+  <a class="btn" id="b2">2</a>
+  <a class="btn" id="b3">3</a>
+  <a class="btn" id="b4">4</a>
+</nav>  
+<div class="plot" id="plot"></div>
+
+<script src="d3.min.js"></script>      
+<script>
+
+const m = {t:50, r:50, b:50, l:50};
+const w = d3.select('#plot').node().clientWidth;
+const h = d3.select('#plot').node().clientHeight;
+
+const plot = d3.select("#plot")
+  .append('svg')
+  .attr('width', w)
+  .attr('height', h)
+  .append('g')
+  .attr('transform',`translate(${m.l},${m.t})`)
+//  .attr('width',w - m.l - m.r)
+//  .attr('height',h - m.t - m.b);
+
+const sX = d3.scaleLinear()
+  .domain([0,20])
+  .range([0,w - m.l - m.r]);
+const sY = d3.scaleLinear()
+  .domain([0,20])
+  .range([h - m.t - m.b,0]);
+
+const data = d3.csv('anscombe.csv', parse);
+
+function parse(d){
+  return {
+    x1:+d.x1,
+    x2:+d.x2,
+    x3:+d.x3,
+    x4:+d.x4,
+    y1:+d.y1,
+    y2:+d.y2,
+    y3:+d.y3,
+    y4:+d.y4
+  }
+}
+
+
+data.then(function(rows){
+
+  draw(rows.map(function(d){
+    return {
+      x: d.x1,
+      y: d.y1,
+    }
+  }), plot);
+
+  d3.select('#b1').on('click', function(){
+    d3.event.preventDefault();
+    draw(rows.map(function(d){
+      return {
+        x: d.x1,
+        y: d.y1,
+      }
+    }), plot);
+  });
+  d3.select('#b2').on('click', function(){
+    d3.event.preventDefault();
+    draw(rows.map(function(d){
+      return {
+        x: d.x2,
+        y: d.y2,
+      }
+    }), plot);
+  });
+  d3.select('#b3').on('click', function(){
+    d3.event.preventDefault();
+    draw(rows.map(function(d){
+      return {
+        x: d.x3,
+        y: d.y3,
+      }
+    }), plot);
+  });
+  d3.select('#b4').on('click', function(){
+    d3.event.preventDefault();
+    draw(rows.map(function(d){
+      return {
+        x: d.x4,
+        y: d.y4,
+      }
+    }), plot);
+  });
+});
+
+
+function draw(data, plot) {
+
+  data.sort(function(a,b){
+    return a.x - b.x;
+  });
+  console.log(data);
+
+  // seet up this function
+  const line = d3.line()
+      .x(function(d){ return sX(d.x) })
+		  .y(function(d){ return sY(d.y) })
+
+  const lineInit = d3.line()
+      .x(function(d){ return 300 })
+		  .y(function(d){ return 600 })
+
+
+  // update selection
+  const nodesUpdate = plot.selectAll('.node')
+    .data(data);
+    // deficit
+
+  const lineUpdate = plot.selectAll('.line')
+    .data([data]);
+
+  // enter selection
+  const nodesEnter = nodesUpdate.enter() // enter gives empty spaces to make up for deficit
+    .append('circle')
+    .attr('class','node')
+    .attr('cx',300)
+    .attr('cy',600)
+    .attr('fill','blue')
+    .attr('opacity',0.2);
+    // make empty spaces for current data
+    
+  const lineEnter = lineUpdate.enter()
+    .append('path')
+    .attr('class', 'line')
+    .datum(data)
+    .attr('d', function(d){
+      return lineInit(d)
+    })
+    .style('fill', 'none')
+    .style('stroke', '#f00')
+    .style('stroke-width', 2)
+    .attr('opacity',0.2);
+    
+    
+  // update (nodes that are there attached to noew data)
+  nodesUpdate.merge(nodesEnter) // combine
+    .transition()
+    .duration(600)
+    .attr('cx',function(d){ 
+      return sX(d.x);
+    })
+    .attr('cy',function(d){ 
+      return sY(d.y);
+    })
+    .attr('r',6);
+    
+  lineUpdate.merge(lineEnter)
+    .transition()
+    .duration(600)
+    .attr('d', function(d){
+      return line(d)
+    });
+
+  // only apply to update case
+  nodesUpdate.attr('fill','black');
+
+  // exit
+  const nodesExit = nodesUpdate.exit()
+    .remove(); // could put exit animations here
+    // surplus
+
+};
+
+</script>  
+</body>
+</html>

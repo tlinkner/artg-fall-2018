@@ -67,4 +67,44 @@ popRanking1.forEach(function(d, i){
 
 //chart-2: using selection.data
 
+const plot2 = d3.select("#chart-2")
+  .append('svg')
+  .attr('width', W)
+  .attr('height', H)
+  .append('g')
+  .attr('transform', `translate(${margin.l}, ${margin.t})`);
+  
+chart2(popRanking2);
 
+function chart2(data){
+
+  const nodes = plot2.selectAll('.node')
+		.data(data, function(d){
+      return d.name;
+    });
+    
+  const nodesEnter = nodes.enter()
+    .append('g')
+		.attr('transform', function(d, i){ 
+      return `translate(${w/3 * i}, ${h/2})`;
+    })
+    .attr('class','node');
+    
+	nodesEnter.append('circle')
+		.attr('r', function(d){
+      return scaleRadius(d.population)
+    });
+
+	nodesEnter.append('text')
+		.text(function(d){
+      return d.name;
+    })
+		.attr('text-anchor','middle');
+	nodesEnter.append('text')
+		.text(function(d){
+      return d.population;
+    })
+		.attr('text-anchor','middle')
+    .attr('dy',20);
+
+}

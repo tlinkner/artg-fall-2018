@@ -1,4 +1,4 @@
-console.log('7-1');
+//console.log('7-1');
 
 /*Pay attention to the following:
 1. scaleRadius is a "square root" scale (line 26)
@@ -22,6 +22,10 @@ const popRanking2 = [
 	{name: 'Houston', population: 2160821}
 ];
 
+//console.log(d3.max(popRanking2, function(d){
+//  return d.population;
+//}));
+
 //scale for circle radius
 const scaleRadius = d3.scaleSqrt().domain([0, 1000000]).range([0,50]);
 
@@ -43,6 +47,8 @@ popRanking1.forEach(function(d, i){
 
 	//pay close attention to the visual attributes of the symbols (x, y, size etc.)
 	//which of these attributes are data-driven?
+  
+//  console.log(this.length);
 
 	const x = w/3 * i;
 	const y = h/2;
@@ -66,5 +72,72 @@ popRanking1.forEach(function(d, i){
 });
 
 //chart-2: using selection.data
+
+const plot2 = d3.select("#chart-2")
+	.append('svg')
+	.attr('width', W)
+	.attr('height', H)
+	.append('g')
+	.attr('transform', `translate(${margin.l}, ${margin.t})`);
+
+//popRanking2.forEach(function(d, i){
+//
+//	//pay close attention to the visual attributes of the symbols (x, y, size etc.)
+//	//which of these attributes are data-driven?
+//  
+////  console.log(this.length);
+//
+//	const x = w/3 * i;
+//	const y = h/2;
+//	const r = scaleRadius(d.population);
+//
+//	const node = plot2.append('g')
+//		.attr('transform', `translate(${x}, ${y})`)
+//		.attr('class','node');
+//
+//	node.append('circle')
+//		.attr('r', r);
+//
+//	node.append('text')
+//		.text(d.name)
+//		.attr('text-anchor','middle');
+//
+//	node.append('text')
+//		.text(d.population)
+//		.attr('text-anchor', 'middle')
+//		.attr('dy', 20);
+//});
+
+// =======================================================
+
+
+const plot2nodes = plot2.selectAll('.node')
+  .data(popRanking2)
+  .enter()
+  .append('g')
+  .attr('class','node')
+  .attr('transform', function(d,i){
+    return `translate(${w/3*i}, ${h/2})`;
+  });
+  
+plot2nodes.append('circle')
+  .attr('r',function(d){
+    return scaleRadius(d.population);
+  });
+
+plot2nodes.append('text')
+  .text(function(d){
+    return d.name;
+  })
+  .attr('text-anchor','middle');
+
+plot2nodes.append('text')
+  .text(function(d){
+    return d.population;
+  })
+  .attr('dy',18)
+  .attr('text-anchor','middle');
+
+
 
 

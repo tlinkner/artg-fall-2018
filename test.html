@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style>
+
+.red {
+    color: red;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Lorem ipsum dolor.</h1>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni natus animi saepe ducimus delectus sequi commodi. Eligendi cupiditate aperiam, animi dolorem voluptatum, eum adipisci minus expedita nulla cumque, saepe consectetur?</p>
+<p>Nemo facilis sint totam, dignissimos, nisi earum soluta in laborum neque! Nisi dignissimos corrupti omnis ut dicta et sequi totam debitis inventore magni. Perferendis tenetur, obcaecati maiores error esse beatae.</p>
+<p>Quo totam inventore quae corrupti ea ab sequi soluta nisi veritatis beatae, officia aut dolorum, dolor quos eum, placeat et laboriosam consequuntur expedita asperiores maiores vitae error. Iste fugit, ex.</p>
+
+<script src="lib/d3/d3.min.js"></script>    
+<script>
+
+d3.selectAll('p').on('click',function(d){
+    d3.select(this).attr('class','red');
+});
+
+</script>
+</body>
+</html>

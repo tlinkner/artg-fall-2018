@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style>
+body {
+  margin: 3em;
+}
+#chart {
+  background: pink;
+  width: 400px;
+  height: 400px;
+}
+#chart svg {
+  width: 400px;
+  height: 400px;
+}
+#chart svg g {
+  transform: translate(50px, 50px);
+}
+nav {
+  margin-bottom: 1em;
+  width: 400px;
+  display: flex;
+  flex-direction: row;
+}
+.btn {
+  flex: 1;
+  border-radius: 3px;
+  padding: 0.5em 1em;
+  text-align: center;
+  color: #fff;
+  background: #333;
+  cursor: pointer;
+}
+.btn:active {
+  background: #ccc;
+}
+.btn + .btn {
+  margin-left:  0.5em;
+}
+</style>
+</head>
+<body>
+ 
+<nav>
+  <a class="btn" id="b1">1</a>
+  <a class="btn" id="b2">2</a>
+</nav>  
+ 
+<div id="chart"></div>
+
+<script src="d3.min.js"></script>      
+<script>
+
+var numbers1 = [15, 8, 42, 4, 32];
+var numbers2 = [2, 40, 35, 4, 24];
+
+var plot = d3.select("#chart")
+  .append('svg')
+  .append('g');
+
+
+function draw(data) {
+
+  const nodesUpdate = plot.selectAll('.node')
+    .data(data);
+    
+  // enter
+  const nodesEnter = nodesUpdate.enter()
+    .append('circle')
+    .attr('class','node')
+    
+  // update
+  nodesUpdate.merge(nodesEnter)
+    .transition()
+    .duration(300)
+    .attr('r',function(d){
+      return d;
+    })
+    .attr('transform',function(d,i){
+      return `translate(${i*60+25},150)`;
+    });
+
+  // exit
+  nodesUpdate.exit()
+    .remove();
+  
+};
+
+
+draw(numbers1);
+
+d3.select('#b1').on('click', function(){
+  d3.event.preventDefault();
+  draw(numbers1);
+});
+d3.select('#b2').on('click', function(){
+  d3.event.preventDefault();
+  draw(numbers2);
+});
+
+
+</script>  
+</body>
+</html>

@@ -11,7 +11,6 @@ const margin = {t:50, r:20, b:50, l:20};
 //Call the function below to generate 
 function generateDummyData(n){
 	const offset = Math.random();
-
 	return Array.from({length:n}).map(function(d,i){
 		return {
 			index: i,
@@ -23,6 +22,10 @@ function generateDummyData(n){
 const dummyData = generateDummyData(200);
 //call the function to draw chart 1
 drawChart1(dummyData);
+
+//console.log(dummyData);
+
+//console.log(dummyData);
 
 function drawChart1(lineData){
 	const W = d3.select('#chart-1').node().clientWidth;
@@ -39,13 +42,15 @@ function drawChart1(lineData){
 	//Create line generator and area generator functions
 	//These generators need to be configured such that they can access x and y coordinates from an input array
 	//Once configured, they can transform these arrays into the "d" (shape) attribute for <path> elements
-	const line = d3.line()
+	const line = d3.line() // returns a function
 		.x(function(d){ return scaleX(d.index) })
 		.y(function(d){ return scaleY(d.value) })
 		//feel free to explore these additional parameters below by commenting / uncommenting each line
-		.curve(d3.curveBasis)
-		//.curve(d3.curveNatural)
-		//.curve(d3.curveStep)
+//		.curve(d3.curveBasis)
+		.curve(d3.curveNatural)
+//		.curve(d3.curveStep)
+
+//console.log( line(lineData) );
 
 	const area = d3.area()
 		.x(function(d){ return scaleX(d.index) })
@@ -113,39 +118,114 @@ function drawChart1(lineData){
 /*
  *Chart 2: replicate the example above, this time with the permit dataset
  */
+ 
+// ============================================== 
 
 d3.csv('../../data/nyc_permits.csv', parse)
 	.then(aggregateByMonth)
 	.then(function(data){
 
-		console.log(data);
-		
 		//THIS IS THE MAIN BODY OF THE ASSIGNMENT
 		//1.1: append <svg> and <g> to <div.#plot-2>
+    const W = d3.select('#chart-2').node().clientWidth;
+    const H = d3.select('#chart-2').node().clientHeight;
+    const w = W - margin.l - margin.r;
+    const h = H - margin.t - margin.b;
+
+
+    const plot2 = d3.select('#chart-2')
+      .append('svg')
+      .attr('width', W).attr('height', H)
+      .append('g')
+      .attr('transform', `translate(${margin.l}, ${margin.t})`);
 
 
 		//1.2 Data discovery
 		//What is the time range in the incoming "data" array?
-
+    // let weekMin =  d3.min(data, function(d){return d.week});
+    // let weekMax =  d3.max(data, function(d){return d.week});
+    const extentX = d3.extent(data, function(d){return d.week});
+    
 		//What is the max and min number of permits per week in this array?
+    data.map(function(d){
+      return d.permitCount = d.permits.length;
+    });
+    // let permitMin =  d3.min(data, function(d){return d.permitCount});
+    // let permitMax = d3.max(data, function(d){return d.permitCount})
+    const extentY = d3.extent(data, function(d){return d.permitCount});
 
 
 		//1.3 Set up two scales
 		//scaleX is a linear time scale
-		const scaleX = d3.scaleTime() /* COMPLETE THIS LINE */
+		const scaleX = d3.scaleTime().domain(extentX).range([0, w]);
 		//scaleY is a linear scale
-		const scaleY = d3.scaleLinear() /* COMPLETE THIS LINE */
+		const scaleY = d3.scaleLinear().domain(extentY).range([h, 0]);
 
 		//1.4 Set up a line generator and an area generator function
 		//These generator functions will take the "data" array, 
 		//and transform it into the "d" (shape) attribute for <path> elements
-
+    const line = d3.line()
+      .x(function(d){ return scaleX(d.week) })
+		  .y(function(d){ return scaleY(d.permitCount) })
+    const area = d3.area()
+      .x(function(d){ return scaleX(d.week) })
+      .y1(function(d){ return scaleY(d.permitCount) })
+      .y0(h)
 
 		//1.5 Draw the chart
+    plot2.append('path')
+      .attr('class', 'line')
+      .datum(data)
+      .attr('d', function(d){
+        return line(d)
+      })
+      .style('fill', 'none')
+      .style('stroke', '#333')
+      .style('stroke-width', 2);
+      
+    plot2.insert('path', '.line')
+      .attr('class', 'area')
+      .datum(data)
+      .attr('d', function(d){
+        return area(d)
+      })
+      .style('fill-opacity', 0.05);
 
 
 		//1.6 Draw axes
+    const axisX = d3.axisBottom()
+      .scale(scaleX);
 
+    const axisY = d3.axisLeft()
+      .scale(scaleY)
+      .tickSize(-w);
+
+    plot2.append('g')
+      .attr('class', 'axis axis-x')
+      .attr('transform', `translate(0, ${h})`)
+      .call(axisX)
+      .selectAll('line')
+      .style('stroke-opacity', 0.2);
+
+    plot2.append('g')
+      .attr('class', 'axis axis-y')
+      .call(axisY)
+      .selectAll('line')
+      .style('stroke-opacity', 0.2);
+      
+      
+    const points = plot2.selectAll('.point')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', function(d){ return scaleX(d.week) })
+      .attr('cy', function(d){ return scaleY(d.permitCount) })
+      .attr('r',6)
+      .attr('class','point');
+      
+    points.on('click', function(d){
+      alert(`There are ${d.permitCount} this week.`);
+    })
 
 	});
 

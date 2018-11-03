@@ -11,10 +11,10 @@ function parse(d){
 		borough: d.borough,
 		community_board: d.community_board,
 		address: `${d.job_location_house_number} ${d.job_location_street_name}`, 
-        latlong: [d.latitude, d.longitude],
+    latlong: [d.latitude, d.longitude],
 		job_number: d.job_number,
 		permit_type: d.permit_type,
-		cost_estimate: d.cost_estimate, 
+		cost_estimate: +d.cost_estimate, 
 		permit_issuance_date: new Date(d.permit_issuance_date),
 		job_type: d.job_type,
 		square_footage: +d.square_footage,
@@ -38,7 +38,7 @@ d3.csv(
 		console.log('For each record, the attributes are as follows');
 		console.log(Object.keys(data[0]));
 		console.groupEnd();
-        console.log(data[0]);
+    console.log(data[0]);
 
 
 		//Question 3: for each record, print its address in console
@@ -215,6 +215,20 @@ d3.csv(
         }
 		console.groupCollapsed('Duplicates');
         console.log(`There are ${dupeCount} duplicates`)
+        console.groupEnd();
+		console.groupCollapsed('Duplicates 2');
+        
+        let dupeCount2 = 0;
+        
+        dupes.forEach(function(d,i){
+            if (i > 0) {
+                if (d.address == dupes[i-1].address) {
+                    dupeCount2 += 1;
+                }
+            }
+        });
+        
+        console.log(`There are ${dupeCount2} duplicates`)
         console.groupEnd();
 
 	});

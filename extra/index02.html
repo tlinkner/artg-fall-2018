@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style>
+body {
+  margin: 3em;
+  font-family: sans-serif;
+}
+.plot {
+  margin: 1em;
+  float: left;
+  width: 300px;
+  height: 300px;
+  background: #eee;
+}
+nav {
+  padding: 0 1em;
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+}
+.btn {
+  flex: 1;
+  border-radius: 3px;
+  padding: 0.5em 1em;
+  text-align: center;
+  color: #fff;
+  background: #333;
+  cursor: pointer;
+}
+.btn:active {
+  background: #ccc;
+}
+.btn + .btn {
+  margin-left:  0.5em;
+}
+</style>
+</head>
+<body>
+
+<h1>Anscombe</h1>
+  
+<nav>
+  <a class="btn" id="b1">1</a>
+  <a class="btn" id="b2">2</a>
+  <a class="btn" id="b3">3</a>
+  <a class="btn" id="b4">4</a>
+</nav>  
+<div class="plot" id="plot"></div>    
+    
+<script src="d3.min.js"></script>      
+<script>
+
+const m = {t:50, r:50, b:50, l:50};
+const w = d3.select('.plot').node().clientWidth - m.l - m.r;
+const h = d3.select('.plot').node().clientHeight - m.t - m.b;
+
+const data=d3.csv('anscombe.csv', parse);
+
+function parse(d){
+  return {
+    x1:+d.x1,
+    x2:+d.x2,
+    x3:+d.x3,
+    x4:+d.x4,
+    y1:+d.y1,
+    y2:+d.y2,
+    y3:+d.y3,
+    y4:+d.y4
+  }
+}
+
+data.then(function(rows){
+  
+  // scaling functinos
+  const sX = d3.scaleLinear()
+    .domain([0,20])
+    .range([0,w]);
+  const sY = d3.scaleLinear()
+    .domain([0,20])
+    .range([h,0]);
+  const plot = d3.selectAll('#plot')
+    .append('svg')
+    .attr('width',w + m.l + m.r)
+    .attr('height',h + m.t + m.b)
+    .append('g')
+    .attr('transform',`translate(${m.l},${m.t})`);
+  // break out data
+  const data1 = rows.map(function(d){
+    return {
+      x: d.x1,
+      y: d.y1
+    }
+  });
+  const data2 = rows.map(function(d){
+    return {
+      x: d.x2,
+      y: d.y2
+    }
+  });
+  const data3 = rows.map(function(d){
+    return {
+      x: d.x3,
+      y: d.y3
+    }
+  });
+  const data4 = rows.map(function(d){
+    return {
+      x: d.x4,
+      y: d.y4
+    }
+  });
+
+  // initial plot
+  draw(plot, data1, sX, sY);
+  // click
+  d3.select('#b1').on('click', function(){
+		d3.event.preventDefault();
+    draw(plot, data1, sX, sY);
+  });
+  d3.select('#b2').on('click', function(){
+		d3.event.preventDefault();
+    draw(plot, data2, sX, sY);
+  });
+  d3.select('#b3').on('click', function(){
+		d3.event.preventDefault();
+    draw(plot, data3, sX, sY);
+  });
+  d3.select('#b4').on('click', function(){
+		d3.event.preventDefault();
+    draw(plot, data4, sX, sY);
+  });
+  
+});
+
+function draw(selection, data, sX, sY){
+
+  const nUpdate = selection.selectAll('.node')
+		.data(data, function(d){
+      return d.name;
+    });
+  // enter
+  const nEnter = nUpdate.enter()
+    .append('circle')
+    .attr('class','node');
+  nEnter.append('circle');
+  // update
+  nUpdate.merge(nEnter)
+    .transition()
+    .duration(300)
+    .attr('cx',function(d){ 
+      return sX(d.x);
+    })
+    .attr('cy',function(d){ 
+      return sY(d.y);
+    })
+    .attr('r',6)
+    .attr('opacity',0.2);
+  // exit
+  const nodesExit = nUpdate.exit()
+    .remove();	 
+    
+}
+
+</script>
+</body>
+</html>

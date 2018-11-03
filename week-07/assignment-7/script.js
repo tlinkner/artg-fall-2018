@@ -29,60 +29,81 @@ data.then(function(rows){
 	//Range of cost_estimate
 	const costMin = d3.min(rows, function(d){ return d.cost_estimate });
 	const costMax = d3.max(rows, function(d){ return d.cost_estimate });
-	console.log(costMin, costMax);
+  //console.log(costMin, costMax);
 	//Range of square_footage
 	const sqftMin = d3.min(rows, function(d){ return d.square_footage });
 	const sqftMax = d3.max(rows, function(d){ return d.square_footage });
-	console.log(sqftMin, sqftMax);
+  //console.log(sqftMin, sqftMax);
 	//Range of cost_per_sqft
 	const perSqftMin = d3.min(rows, function(d){ return d.cost_per_sqft });
 	const perSqftMax = d3.max(rows, function(d){ return d.cost_per_sqft });
-	console.log(perSqftMin, perSqftMax);
+  //console.log(perSqftMin, perSqftMax);
 	//The boroughs
 	const boroughs = d3.nest()
 		.key(function(d){ return d.borough })
 		.entries(rows)
 		.map(function(d){ return d.key });
-	console.log(boroughs);
+  //console.log(boroughs);
 
 	//Use the data gathered during discovery to set the scales appropriately
 	scaleCost.domain([1, costMax]);
 	scaleSqft.domain([1, sqftMax]);
 	scalePerSqft.domain([1, perSqftMax]);
-	scaleBorough.domain(boroughs).range(d3.range(boroughs.length).map(function(d){
+	scaleBorough.domain(boroughs).range( d3.range(boroughs.length).map(function(d){
 		return (w-100)/(boroughs.length-1)*d + 50;
 	}));
 	scaleSize.domain([0, costMax]);
 
 	//Plot per sqft cost vs. borough
-	perSqftChart(rows);
+  // perSqftChart(rows);
 
 	//Plot cost vs. sqft
-	//costVsSqftChart(rows);
+	 costVsSqftChart(rows);
 
 	//PART 2: toggle between the two plots
 	d3.select('#cost-vs-sqft')
 		.on('click', function(){
 			d3.event.preventDefault();
-			/* YOUR CODE HERE*/
+      costVsSqftChart(rows);
 		});
 
 	d3.select('#per-sqft-vs-borough')
 		.on('click', function(){
 			d3.event.preventDefault();
-			/* YOUR CODE HERE*/
+      perSqftChart(rows);
 		})
 
 });
 
 function perSqftChart(data){
 
-	const nodes = plot.selectAll('.node')
-		.data(data)
-	/*
- 	 * Complete this function
-	 * YOUR CODE HERE*/
+	const nodesUpdate = plot.selectAll('.node')
+		.data(data, function(d){
+      return d.name;
+    })
+    
+  // enter
+  const nodesEnter = nodesUpdate.enter()
+    .append('g')
+    .attr('class','node');
 
+  nodesEnter.append('circle');
+   
+  // update
+  nodesUpdate.merge(nodesEnter)
+    .select('circle')
+    .attr('cx', function(d){ 
+      return scaleBorough(d.borough);
+    })
+    .attr('cy', function(d){ 
+      return scalePerSqft(d.cost_estimate);
+    })
+    .attr('r', 1.5)
+    .style('fill-opacity', .4);
+
+  // exit
+  const nodesExit = nodesUpdate.exit()
+    .remove();	 
 
 	//Draw axes
 	//This part is already complete, but please go through it to see if you understand it
@@ -104,12 +125,35 @@ function perSqftChart(data){
 
 function costVsSqftChart(data){
 
-	const nodes = plot.selectAll('.node')
-		.data(data)
-	/*
- 	 * Complete this function
-	 * YOUR CODE HERE*/
-	 
+	const nodesUpdate = plot.selectAll('.node')
+		.data(data, function(d){
+      return d.name;
+    })
+    
+  // enter
+  const nodesEnter = nodesUpdate.enter()
+    .append('g')
+    .attr('class','node');
+
+  nodesEnter.append('circle');
+   
+  // update
+  nodesUpdate.merge(nodesEnter)
+    .select('circle')
+		.transition()
+    .attr('cx', function(d){ 
+      // when sqft is zero scaler is returning -Infinfity
+      return scaleSqft(d.square_footage) > 0?scaleSqft(d.square_footage):0;
+    })
+    .attr('cy', function(d){ 
+      return scaleCost(d.cost_estimate);
+    })
+    .attr('r', 1.5)
+    .style('fill-opacity', .4);
+
+  // exit
+  const nodesExit = nodesUpdate.exit()
+    .remove();	 
 
 	//Draw axes
 	//This part is already complete, but please go through it to see if you understand it
@@ -131,7 +175,7 @@ function costVsSqftChart(data){
 
 function parse(d){
 	return {
-		applicant_business_name:d.applicant_business_name,
+applicant_business_name:d.applicant_business_name,
 		borough:d.borough,
 		community_board:d.community_board,
 		cost_estimate:+d.cost_estimate, //convert string to number

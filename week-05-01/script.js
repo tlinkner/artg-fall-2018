@@ -180,5 +180,7 @@ console.log(arr_obj_by_class);
 console.groupEnd();
 
 
+let num = 12.345677898;
+console.log(Math.round(num));
 
 
