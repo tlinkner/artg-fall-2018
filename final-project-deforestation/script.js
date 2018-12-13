@@ -72,12 +72,12 @@ Promise.all([dataPromise, metadataPromise])
       .map(function(y){ // year
         y.values.forEach(function(r){
           // set total area for use in scaling the pies
-          r.totalArea = r.values[0].value;
-          r.regionName = r.values[0].country;
           let forest = r.values.filter(d => d.seriesCode == "AG.LND.FRST.K2")[0].value;
           let ag = r.values.filter(d => d.seriesCode == "AG.LND.AGRI.K2")[0].value;
           let total = r.values.filter(d => d.seriesCode == "AG.LND.TOTL.K2")[0].value
           let newValues = [];
+          r.totalArea = total;
+          r.regionName = r.values[0].country;
           newValues[0] = {
             'id': 'Other Land', 
             'value': total - ag - forest
@@ -221,10 +221,12 @@ function drawPlotGrid(data, domSelection) {
   const maxPieDaimeter = w/4;
 
   // scale for pie chart radius
+  // const extent = d3.extent(data, d => d.totalArea);
   const extent = d3.extent(data, d => d.totalArea);
-  const scaleRadius = d3.scaleSqrt()
+  
+  const scaleRadius = d3.scaleLog()
     .domain(extent)
-    .range([0,maxPieDaimeter]);
+    .range([0,90]);
 
   // grid setup
   const offset = maxPieDaimeter / 2;
@@ -256,7 +258,7 @@ function drawPlotGrid(data, domSelection) {
       d3.select(this)
         .attr('transform', `translate(${x + offset}, ${y + offset})`)
         .attr('data-i',i)
-      drawPie(d, scaleRadius(d.totalArea)/2 - 20, this);
+      drawPie(d, scaleRadius(d.totalArea)+20, this); // sad hack
     })
     .select('.region-label')
     .text(d=>d.regionName)
@@ -278,12 +280,9 @@ function drawPlotGrid(data, domSelection) {
 function drawPie(data, radius, rootDOM){
 
   console.groupCollapsed('drawPie');
-    // console.log(data);
 
   // select the subplot
   const subplot = d3.select(rootDOM);
-  // console.log(data.key);
-  // console.log(data.values);
   
  	// pie function
 	const pie = d3.pie()
@@ -295,15 +294,14 @@ function drawPie(data, radius, rootDOM){
     
   // transform data
 	const dataTransformed = pie(data.values);
-  // console.log(dataTransformed);
 
   // arc function
 	const arc = d3.arc()
 		.innerRadius(0)
 		.outerRadius(radius);
     
-    // why is there a negative radius?
-    console.log(radius);
+    // why is there a negative radius? answer: scalesqrt
+    // console.log("R=" + radius);
     
 	// Update
 	const nodesUpdate = subplot.selectAll('.arc')
@@ -316,11 +314,7 @@ function drawPie(data, radius, rootDOM){
 	// Enter and Update: attr
 	nodesUpdate.merge(nodesEnter)
     .attr('class', 'arc')
-		.attr('d', function(datum){
-      console.log(datum);
-      console.log(arc(datum));
-      return arc(datum);
-    })
+		.attr('d', datum => arc(datum))
 		.attr('fill', function(d, i){
 			return colorScale(i);
 		})
