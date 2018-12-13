@@ -8,8 +8,59 @@
 
 /* Fonts and colors */
 
+body {
+	font-family:'Helvetica',sans-serif;
+	font-size:16px;
+}
+
+h1 {
+	font-size:3rem;
+	border-bottom:2px solid black;
+}
+
+h2 {
+	font-size:2rem;
+}
+
+
+
 /* Style the navigation menu */
+
+footer a {
+	font-weight:bold;
+	border:none;
+}
+
 
 /* Style the table */
 
+tr:nth-child(2n) {
+  background-color: #eee;
+}
+
 /* Style the pie chart */
+
+path {
+	fill:rgb(0,0,255);
+}
+
+path:nth-child(1) {
+	fill: red;
+}
+
+path:nth-child(2) {
+	fill: green;
+}
+
+path:nth-child(3) {
+	fill: yellow;
+}
+
+path:nth-child(4) {
+	fill: purple;
+}
+
+path:nth-child(5) {
+	fill: orange;
+}
+

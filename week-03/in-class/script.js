@@ -4,10 +4,20 @@ console.log('Hello world');
 
 {
 	//Values and operators
+  let a = 1 + 2;
+  console.log(typeof(a));
 
 	//Type coersion
+  let b = toString(a)
+  console.log(typeof(b));
+  
+  let c = +b
+  console.log(typeof(c));
 
 	//Assignment operations
+  var d = 1;
+  let e = "string";
+  const f = [];
 }
 
 //Objects
@@ -121,4 +131,7 @@ console.log("The numbers in each bucket is: "
 
 {
 	//Exercise 3: create a charAt function
+}
+
+function charAt(str,pos){ 
 }

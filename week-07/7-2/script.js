@@ -79,12 +79,10 @@ function drawNodes(data) {
 
   cityNodesUpdate.merge(cityNodesEnter)
     .select('circle')
+    .attr('r',function(d){
+      return scaleRadius(d.population);
+    });
     ;
-//    .transition()
-//    .duration(1000)
-//    .attr('r',function(d){
-//      return scaleRadius(d.population);
-//    });
 
   cityNodesUpdate.merge(cityNodesEnter)
     .select('text')

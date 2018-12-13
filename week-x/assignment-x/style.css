@@ -1,0 +1,9 @@
+.chart{
+	height:600px;
+	width:100%
+}
+.link{
+	fill:none;
+	stroke:#eee;
+	stroke-width:1px;
+}

@@ -98,7 +98,7 @@ let finalValue = increment(initialValue, 10);
 
 console.log(initialValue);
 console.log(finalValue);
-console.log(n); // Not defined. It is not in global scope.
+//console.log(n); // Not defined. It is not in global scope.
 
 
 /*

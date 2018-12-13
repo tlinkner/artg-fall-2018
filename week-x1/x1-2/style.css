@@ -1,0 +1,47 @@
+.header{
+	position:absolute;
+	width:100%;
+	height:60px;
+}
+.viz{
+	position:absolute;
+	width:100%;
+	top:60px;
+	bottom:0px;
+}
+
+.plot{
+	height:100%;
+	width:50%;
+	float:left;
+}
+
+.full-screen{
+	width:100%;
+	height:100%;
+}
+
+.node{
+	fill:#E9371C;
+	stroke:#333;
+	stroke-width:1px;
+	opacity:.2;
+}
+
+.axis line{
+	stroke:#333;
+	stroke-opacity:.2;
+}
+
+.axis .domain{
+	display:none;
+}
+
+.tt {
+  position: absolute;
+  padding: 0.5em;
+  width: 280px;
+  background: #ccc;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+  z-index: +1;
+}

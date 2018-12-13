@@ -1,0 +1,71 @@
+body {
+  color: #56606b;
+}
+
+.node circle{
+	fill-opacity:.1;
+	stroke:#333;
+	stroke-width:2px;
+}
+
+.node text{
+	fill:#333;
+}
+
+.container {
+}
+
+.wrapper {
+  margin: 30px;
+}
+
+
+.plot-wrapper {
+  position: relative;
+  padding-bottom: 66%;
+}
+
+.plot {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.plot svg text {
+  fill: #56606b;
+}
+
+.slider {}
+
+.slider_range {
+  stroke: slategrey;
+  stroke-width: 2;
+}
+
+.slider_tick {
+  fill: slategrey;
+}
+
+.slider_handle {
+  fill: limegreen;
+}
+
+.slider_handle.active,
+.slider_handle:hover {
+  fill: lime;
+}
+
+.tip {
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  color: white;
+  background-color: #56606b;
+  font-size: 0.75em;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.5)
+}
+
+#year::before {
+  content: " ";
+}

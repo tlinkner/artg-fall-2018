@@ -89,9 +89,10 @@ d3.csv('../../data/nyc_permits.csv', parse)
     .value(function(d){ return d.values.length });
 
   const dataTransformed = pie(groups);
-//  console.log(dataTransformed);
+  // console.log(dataTransformed);
     
 	const r = d3.min([w, h])/2;
+  
 	const arc = d3.arc()
 		.innerRadius(0)
 		.outerRadius(r);

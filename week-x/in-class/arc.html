@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+#plot {
+  width: 600px;
+  height: 600px;
+}
+.arc {
+  fill: red;
+  stroke: white;
+  stroke-width: 2;
+}
+</style>
+</head>
+<body>
+<div class='container'>
+    <div id="plot"></div>
+</div>
+<script src='../../lib/d3/d3.min.js'></script>
+<script>
+
+const data = [
+	{id: 'foo', value: 56},
+	{id: 'bar', value: 88},
+	{id: 'baz', value: 130}
+];
+
+const margin = {t:50, r:50, b:50, l:50}
+const W = d3.select('#plot').node().clientWidth;
+const H = d3.select('#plot').node().clientHeight;
+
+const r = d3.min([W, H])/2;
+
+// Pie function
+const pie = d3.pie()
+  .value(function(d){ return d.value }) //we use the .value of each object to determine how big the slice
+
+const dataTransformed = pie(data);
+//console.log(dataTransformed);
+
+// Arc function
+const arc = d3.arc()
+  .innerRadius(r/2)
+  .outerRadius(r);
+
+
+
+//DOM
+const plot = d3.select('#plot')
+  .append('svg')
+  .attr('width', W).attr('height', H)
+  .append('g')
+  .attr('transform', `translate(${W/2}, ${H/2})`) //note that we center this <g> element
+
+plot.selectAll('.arc')
+  .data(dataTransformed)
+  .enter()
+  .append('path')
+  .attr('class', 'arc')
+  .attr('d', function(datum){
+    return arc(datum)
+  })
+ 
+ 
+ 
+myArcData = {
+  endAngle: 1, // radians 
+  startAngle: 0,
+}
+
+const myArc = arc(myArcData);
+console.log(myArc);
+
+plot.append('path')
+  .attr('d',myArc)
+  .attr('data-name','myArc')
+  .style('fill','black');
+
+ 
+//const arc = d3.arc() // width = x1 - x0
+//  .startAngle()
+//  .endAngle()
+//  .innerRadius(r/2) // inner r = y
+//  .outerRadius(r);  // outer r = y + height
+ 
+ 
+
+
+//function polarToCartesian(angle, r){
+//  return [r * Math.cos(angle), r * Math.sin(angle)]
+//}
+//
+//const arc = d3.arc() // width = x1 - x0
+//  .startAngle()
+//  .endAngle()
+//  .innerRadius(r/2) // inner r = y
+//  .outerRadius(r);  // outer r = y + height
+
+// need a d path
+
+
+
+//json.then(function(data){
+//
+//	const rootNode = d3.hierarchy(data)
+//		.sum(d => d.value); // What is this syntax?
+////		.sum(function(d){ return d.value });
+//
+//	renderPartition(rootNode, document.getElementById('partition'));
+//})
+
+//function renderPartition(rootNode, rootDOM){
+//
+//  
+//  const W = rootDOM.clientWidth;
+//	const H = rootDOM.clientHeight;
+//	const w = W - margin.l - margin.r;
+//	const h = H - margin.t - margin.b;
+//  
+//	const plot = d3.select(rootDOM)
+//		.append('svg')
+//		.attr('width', W)
+//		.attr('height', H)
+//		.append('g')
+//		.attr('transform', `translate(${margin.l}, ${margin.t})`);
+//  const partitionTransform = d3.partition()
+//    .size([w,h]);
+//  const dataTransformed = partitionTransform(rootNode);
+//  const nodesData = dataTransformed.descendants();
+//  const nodesLinks = dataTransformed.links();
+//  
+//	// Update
+//	const nodes = plot.selectAll('.node')
+//			.data(nodesData);
+//		
+//	// Enter
+//  const nodesEnter = nodes.enter()
+//		.append('g')
+//		.attr('class','node')
+//    nodesEnter.append('rect');
+//		nodesEnter.append('text');
+//		
+//	// Enter and Update
+//  nodesEnter.merge(nodes)
+//    .attr('transform', function(d){
+//      return `translate(${d.x0}, ${d.y0})`
+//    })
+//    .select('rect')
+//    .attr('width',function(d){
+//      return d.x1 - d.x0;
+//    })
+//    .attr('height',function(d){
+//      return d.y1 - d.y0;
+//    })
+//    .style('fill', function(d){
+//				return depthScale(d.depth);
+//    });
+//		
+//	// Exit
+//	const nodesExit = nodes.exit()
+//		.remove();
+//  
+//}
+
+</script>
+</body>
+</html>

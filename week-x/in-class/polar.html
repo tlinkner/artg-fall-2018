@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'>
+<link href='../../lib/bootstrap/css/bootstrap.min.css' rel='stylesheet' />
+<link href='./style.css' rel='stylesheet' />
+</head>
+<body>
+<div class='container'>
+<h2>Hierarchical visualizations</h2>
+    <div class='chart' id='partition' ></div>
+</div>
+<script src='../../lib/d3/d3.min.js'></script>
+<script>
+
+const margin = {t:50, r:50, b:50, l:50};
+const json = d3.json('./flare.json');
+const depthScale = d3.scaleOrdinal()
+	.domain([0,1,2,3,4])
+	.range([null, 'red', '#03afeb', 'yellow', 'green']);
+
+
+
+
+
+
+
+function polarToCartesian(angle, r){
+  return [r * Math.cos(angle), r * Math.sin(angle)]
+}
+
+//const arc = d3.arc() // width = x1 - x0
+//  .startAngle()
+//  .endAngle()
+//  .innerRadius(r/2) // inner r = y
+//  .outerRadius(r);  // outer r = y + height
+
+// need a d path
+
+
+
+json.then(function(data){
+
+	const rootNode = d3.hierarchy(data)
+		.sum(d => d.value); // What is this syntax?
+//		.sum(function(d){ return d.value });
+
+	renderPartition(rootNode, document.getElementById('partition'));
+})
+
+function renderPartition(rootNode, rootDOM){
+
+  
+  const W = rootDOM.clientWidth;
+	const H = rootDOM.clientHeight;
+	const w = W - margin.l - margin.r;
+	const h = H - margin.t - margin.b;
+  
+	const plot = d3.select(rootDOM)
+		.append('svg')
+		.attr('width', W)
+		.attr('height', H)
+		.append('g')
+		.attr('transform', `translate(${margin.l}, ${margin.t})`);
+  const partitionTransform = d3.partition()
+    .size([w,h]);
+  const dataTransformed = partitionTransform(rootNode);
+  const nodesData = dataTransformed.descendants();
+  const nodesLinks = dataTransformed.links();
+  
+	// Update
+	const nodes = plot.selectAll('.node')
+			.data(nodesData);
+		
+	// Enter
+  const nodesEnter = nodes.enter()
+		.append('g')
+		.attr('class','node')
+    nodesEnter.append('rect');
+		nodesEnter.append('text');
+		
+	// Enter and Update
+  nodesEnter.merge(nodes)
+    .attr('transform', function(d){
+      return `translate(${d.x0}, ${d.y0})`
+    })
+    .select('rect')
+    .attr('width',function(d){
+      return d.x1 - d.x0;
+    })
+    .attr('height',function(d){
+      return d.y1 - d.y0;
+    })
+    .style('fill', function(d){
+				return depthScale(d.depth);
+    });
+		
+	// Exit
+	const nodesExit = nodes.exit()
+		.remove();
+  
+}
+
+</script>
+</body>
+</html>
