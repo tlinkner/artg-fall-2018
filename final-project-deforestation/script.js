@@ -278,13 +278,12 @@ function drawPlotGrid(data, domSelection) {
 function drawPie(data, radius, rootDOM){
 
   console.groupCollapsed('drawPie');
-  
-  console.log(data);
+    // console.log(data);
 
   // select the subplot
   const subplot = d3.select(rootDOM);
-  console.log(data.key);
-  console.log(data.values);
+  // console.log(data.key);
+  // console.log(data.values);
   
  	// pie function
 	const pie = d3.pie()
@@ -296,11 +295,15 @@ function drawPie(data, radius, rootDOM){
     
   // transform data
 	const dataTransformed = pie(data.values);
+  // console.log(dataTransformed);
 
   // arc function
 	const arc = d3.arc()
 		.innerRadius(0)
 		.outerRadius(radius);
+    
+    // why is there a negative radius?
+    console.log(radius);
     
 	// Update
 	const nodesUpdate = subplot.selectAll('.arc')
@@ -313,7 +316,11 @@ function drawPie(data, radius, rootDOM){
 	// Enter and Update: attr
 	nodesUpdate.merge(nodesEnter)
     .attr('class', 'arc')
-		.attr('d', datum => arc(datum))
+		.attr('d', function(datum){
+      console.log(datum);
+      console.log(arc(datum));
+      return arc(datum);
+    })
 		.attr('fill', function(d, i){
 			return colorScale(i);
 		})
