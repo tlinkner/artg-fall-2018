@@ -57,6 +57,7 @@ const metadataPromise = d3.csv('data/countries-metadata.csv', parseMetadata);
 
 
 
+
 // data loaded
 Promise.all([dataPromise, metadataPromise])
   .then(function ([data, metadata]) {
@@ -122,12 +123,14 @@ Promise.all([dataPromise, metadataPromise])
 
 
 
+
 // --------------------------------------------------------
 
 function myfilterByYear(data, year) {
   let dataByYear = data.filter(d => +d.key === year);
   return dataByYear[0].values;
 }
+
 
 
 
@@ -150,14 +153,34 @@ function slider(selection, w, values, callback) {
     .attr('y1', HEIGHT / 2)
     .attr('y2', HEIGHT / 2);
     
-  const ticks = selection.selectAll('.slider_tick')
-    .data(values)
-    .enter()
+	// update
+  const ticksUpdate = selection.selectAll('.slider_tick')
+		.data(values, d =>d);
+
+	// Enter
+	const ticksEnter = ticksUpdate.enter()
+    .append('g')
+    .attr('class',"slider_tick");
+		// append
+    
+  const ticktxt = ticksEnter.append('text')
+    .text(d => d)
+    .attr('transform','translate(-15,45)')
+    .attr('font-size',12);
+
+	// Enter and Update
+	ticksUpdate.merge(ticksEnter)
+    .attr('transform', function(d){
+        return `translate(${scale(d)},0)`
+    })
     .append('circle')
-    .attr('class', 'slider_tick')
-    .attr('cx', d => scale(d))
-    .attr('cy', HEIGHT / 2)
     .attr('r', HEIGHT / 4)
+    .attr('cx', 0)
+    .attr('cy', HEIGHT / 2)
+    
+	// Exit
+	const ticksExit = ticksUpdate.exit()
+		.remove();
     
   const handle = selection
     .append('circle')
@@ -206,7 +229,6 @@ function slider(selection, w, values, callback) {
     callback(year);
   }
 }
-
 
 
 
@@ -320,7 +342,7 @@ function drawPie(data, radius, rootDOM){
 		})
     .on("mouseover", function(d){
       d3.select('.tip_label').text(d.data.id);
-      d3.select('.tip_value').text(d.data.value);    
+      d3.select('.tip_value').text(Math.round(d.data.value)+" sq.km");    
       return tooltip
         .style("visibility", "visible");
     })
